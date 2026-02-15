@@ -17,7 +17,7 @@
                         @if($a->foto)
                             <img src="{{ asset('storage/'.$a->foto) }}"
                                 class="card-img-top"
-                                style="height:200px;object-fit:cover">
+                                style="height:20px;object-fit:cover">
                         @endif
 
                         <div class="card-body">
