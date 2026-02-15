@@ -8,6 +8,12 @@
         <p class="text-muted mb-0">Ringkasan aspirasi untuk dikirim ke kepala sekolah.</p>
     </div>
 
+    @if(session('status'))
+        <div class="alert alert-success">
+            {{ session('status') }}
+        </div>
+    @endif
+
     <div class="card shadow-sm">
         <div class="card-body">
             <form method="POST" action="{{ route('admin.laporan.send') }}">

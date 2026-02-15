@@ -119,6 +119,9 @@
                                         <span class="badge {{ $statusBadgeClass }} text-uppercase">{{ $a->status }}</span>
                                     @endif
                                 </div>
+                                    <p class="text-muted mb-1 mt-2">
+                                        Pengirim: {{ $a->pengirim->nama ?? '-' }} (NISN: {{ $a->nisn }})
+                                    </p>
                                     <h5 class="mt-2">{{ $a->lokasi }}</h5>
                                     <p>{{ $a->ket }}</p>
 

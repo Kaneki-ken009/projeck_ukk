@@ -130,7 +130,7 @@ class AdminController extends Controller
             'note' => $data['note'] ?? null,
         ]);
 
-        return back()->with('status', 'Laporan berhasil dikirim.');
+        return back()->with('status', 'Laporan telah terkirim');
     }
 
     public function downloadLaporan(LaporanLog $log)

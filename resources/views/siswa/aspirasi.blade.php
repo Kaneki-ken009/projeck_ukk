@@ -22,7 +22,9 @@
 
                         <div class="card-body">
                             <span class="badge bg-primary">{{ $a->kategori->nama }}</span>
-                            <h6 class="mt-2">{{ $a->siswa->nama }}</h6>
+                            <h6 class="mt-2">
+                                Pengirim: {{ $a->pengirim->nama ?? '-' }} (NISN: {{ $a->nisn }})
+                            </h6>
                             <h5 class="mt-2">{{ $a->lokasi }}</h5>
                             <p>{{ $a->ket }}</p>
 

@@ -12,7 +12,7 @@ class SiswaController extends Controller
     public function index()
     {
         // SEMUA ASPIRASI (GLOBAL)
-        $aspirasi = InputAspirasi::with('kategori')
+        $aspirasi = InputAspirasi::with(['kategori', 'pengirim'])
             ->orderBy('tgl_inputaspirasi', 'desc')
             ->get();
 

@@ -31,6 +31,11 @@ class InputAspirasi extends Model
         return $this->belongsTo(Kategori::class, 'id_kategori', 'id_kategori');
     }
 
+    public function pengirim(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'nisn', 'nisn');
+    }
+
     public function feedback(): HasMany
     {
         return $this->hasMany(Feedback::class, 'id_aspirasi', 'id_inputaspirasi');
