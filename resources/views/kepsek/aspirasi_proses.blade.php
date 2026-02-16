@@ -8,6 +8,10 @@
         <p class="text-muted mb-0">Aspirasi yang sedang ditangani.</p>
     </div>
 
+    <div class="mb-3">
+        <input type="text" id="searchKepsekProses" class="form-control" placeholder="Cari aspirasi...">
+    </div>
+
     <div class="table-responsive">
         <table class="table table-sm table-striped align-middle">
             <thead>
@@ -22,7 +26,7 @@
             </thead>
             <tbody>
                 @forelse($aspirasi as $a)
-                    <tr>
+                    <tr class="aspirasi-row">
                         <td>{{ $a->id_inputaspirasi }}</td>
                         <td>{{ $a->nisn }}</td>
                         <td>{{ $a->kategori->nama ?? '-' }}</td>
@@ -38,4 +42,18 @@
             </tbody>
         </table>
     </div>
+    <script>
+        (() => {
+            const input = document.getElementById('searchKepsekProses');
+            const rows = Array.from(document.querySelectorAll('.aspirasi-row'));
+            if (!input || rows.length === 0) return;
+
+            input.addEventListener('input', function() {
+                const keyword = this.value.toLowerCase().trim();
+                rows.forEach((row) => {
+                    row.style.display = row.innerText.toLowerCase().includes(keyword) ? '' : 'none';
+                });
+            });
+        })();
+    </script>
 @endsection
