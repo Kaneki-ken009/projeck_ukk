@@ -27,7 +27,7 @@ class AdminController extends Controller
     public function menunggu()
     {
         return view('admin.aspirasi_menunggu', [
-            'aspirasi' => InputAspirasi::with('kategori')
+            'aspirasi' => InputAspirasi::with(['kategori', 'pengirim'])
                 ->where('status', 'menunggu')
                 ->orderBy('tgl_inputaspirasi', 'desc')
                 ->get(),

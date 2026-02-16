@@ -14,6 +14,7 @@
                 <tr>
                     <th>ID</th>
                     <th>NISN</th>
+                    <th>Nama</th>
                     <th>Kategori</th>
                     <th>Lokasi</th>
                     <th>Tanggal</th>
@@ -27,6 +28,7 @@
                     <tr>
                         <td>{{ $a->id_inputaspirasi }}</td>
                         <td>{{ $a->nisn }}</td>
+                        <td>{{ $a->pengirim->nama ?? '-' }}</td>
                         <td>{{ $a->kategori->nama ?? '-' }}</td>
                         <td>{{ $a->lokasi }}</td>
                         <td>{{ $a->tgl_inputaspirasi }}</td>
@@ -49,7 +51,7 @@
 
                     <div class="modal fade" id="feedbackModal{{ $a->id_inputaspirasi }}" tabindex="-1"
                         aria-hidden="true">
-                        <div class="modal-dialog">
+                        <div class="modal-dialog modal-lg">
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title">Feedback Aspirasi #{{ $a->id_inputaspirasi }}</h5>
@@ -57,6 +59,7 @@
                                 </div>
                                 <form method="POST" action="{{ route('admin.feedback') }}">
                                     @csrf
+                                    <input type="hidden" name="id_aspirasi" value="{{ $a->id_inputaspirasi }}">
                                     <div class="modal-body">
                                         <div class="row g-3">
                                             <div class="col-md-6">
@@ -65,7 +68,8 @@
                                             </div>
                                             <div class="col-md-6">
                                                 <label class="form-label">Nama</label>
-                                                <input type="text" class="form-control" value="{{ $a->nama }}" disabled>
+                                                <input type="text" class="form-control"
+                                                    value="{{ $a->pengirim->nama ?? '-' }}" disabled>
                                             </div>
                                             <div class="col-6">
                                                 <label class="form-label">Kategori</label>
@@ -79,27 +83,25 @@
                                                 <label class="form-label">Keterangan</label>
                                                 <input type="text" class="form-control" value="{{ $a->ket }}" disabled>
                                             </div>
-                                            <input type="hidden" name="id_aspirasi" value="{{ $a->id_inputaspirasi }}">
-                                            <div class="modal-body">
-                                                <div class="mb-3">
-                                                    <label class="form-label">Status</label>
-                                                    <select class="form-select" name="status" required>
-                                                        <option value="proses">Proses</option>
-                                                        <option value="selesai">Selesai</option>
-                                                    </select>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label class="form-label">Isi Feedback</label>
-                                                    <textarea class="form-control" name="isi_feedback" rows="3" required></textarea>
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                                                    Batal
-                                                </button>
-                                                <button type="submit" class="btn btn-primary">Simpan</button>
-                                            </div>
                                         </div>
+                                        <hr class="my-4">
+                                        <div class="mb-3">
+                                            <label class="form-label">Status</label>
+                                            <select class="form-select" name="status" required>
+                                                <option value="proses">Proses</option>
+                                                <option value="selesai">Selesai</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="form-label">Isi Feedback</label>
+                                            <textarea class="form-control" name="isi_feedback" rows="3" required></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                            Batal
+                                        </button>
+                                        <button type="submit" class="btn btn-primary">Simpan</button>
                                     </div>
                                 </form>
                             </div>
@@ -107,7 +109,7 @@
                     </div>
                 @empty
                     <tr>
-                        <td colspan="8" class="text-muted">Belum ada data.</td>
+                        <td colspan="9" class="text-muted">Belum ada data.</td>
                     </tr>
                 @endforelse
             </tbody>
