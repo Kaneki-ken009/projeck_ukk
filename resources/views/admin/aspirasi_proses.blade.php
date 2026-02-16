@@ -61,11 +61,7 @@
                                     <div class="modal-body">
                                         <div class="mb-3">
                                             <label class="form-label">Status</label>
-                                            <select class="form-select" name="status" required>
-                                                <option value="menunggu">Menunggu</option>
-                                                <option value="proses" selected>Proses</option>
-                                                <option value="selesai">Selesai</option>
-                                            </select>
+                                            <input type="text" class="form-control" value="selesi" disabled>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Isi Feedback</label>

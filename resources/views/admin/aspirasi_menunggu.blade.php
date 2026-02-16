@@ -57,26 +57,49 @@
                                 </div>
                                 <form method="POST" action="{{ route('admin.feedback') }}">
                                     @csrf
-                                    <input type="hidden" name="id_aspirasi" value="{{ $a->id_inputaspirasi }}">
                                     <div class="modal-body">
-                                        <div class="mb-3">
-                                            <label class="form-label">Status</label>
-                                            <select class="form-select" name="status" required>
-                                                <option value="menunggu" selected>Menunggu</option>
-                                                <option value="proses">Proses</option>
-                                                <option value="selesai">Selesai</option>
-                                            </select>
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label">NISN</label>
+                                                <input type="text" class="form-control" value="{{ $a->nisn }}" disabled>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Nama</label>
+                                                <input type="text" class="form-control" value="{{ $a->nama }}" disabled>
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label">Kategori</label>
+                                                <input type="text" class="form-control" value="{{ $a->kategori->nama ?? '-' }}" disabled>
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label">Lokasi</label>
+                                                <input type="text" class="form-control" name="lokasi" value="{{ $a->lokasi }}" disabled>
+                                            </div>
+                                            <div class="col-12">
+                                                <label class="form-label">Keterangan</label>
+                                                <input type="text" class="form-control" value="{{ $a->ket }}" disabled>
+                                            </div>
+                                            <input type="hidden" name="id_aspirasi" value="{{ $a->id_inputaspirasi }}">
+                                            <div class="modal-body">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Status</label>
+                                                    <select class="form-select" name="status" required>
+                                                        <option value="proses">Proses</option>
+                                                        <option value="selesai">Selesai</option>
+                                                    </select>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Isi Feedback</label>
+                                                    <textarea class="form-control" name="isi_feedback" rows="3" required></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                                    Batal
+                                                </button>
+                                                <button type="submit" class="btn btn-primary">Simpan</button>
+                                            </div>
                                         </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">Isi Feedback</label>
-                                            <textarea class="form-control" name="isi_feedback" rows="3" required></textarea>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                                            Batal
-                                        </button>
-                                        <button type="submit" class="btn btn-primary">Simpan</button>
                                     </div>
                                 </form>
                             </div>
