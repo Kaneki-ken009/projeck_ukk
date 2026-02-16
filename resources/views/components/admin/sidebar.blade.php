@@ -24,6 +24,7 @@
         </div>
 
         <a href="{{ url('/admin/users-page') }}" class="nav-link text-white">User</a>
+        <a href="{{ route('admin.siswa') }}" class="nav-link text-white">Siswa</a>
         <a href="{{ url('/admin/laporan') }}" class="nav-link text-white">Laporan</a>
     </nav>
 

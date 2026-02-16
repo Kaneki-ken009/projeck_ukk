@@ -45,12 +45,18 @@ Route::get('/admin/aspirasi/menunggu', [AdminController::class, 'menunggu'])->na
 Route::get('/admin/aspirasi/proses', [AdminController::class, 'proses'])->name('admin.aspirasi.proses');
 Route::get('/admin/aspirasi/selesai', [AdminController::class, 'selesai'])->name('admin.aspirasi.selesai');
 Route::get('/admin/users-page', [AdminController::class, 'users'])->name('admin.users');
+Route::get('/admin/siswa-page', [AdminController::class, 'siswa'])->name('admin.siswa');
 Route::get('/admin/laporan', [AdminController::class, 'laporan'])->name('admin.laporan');
 Route::get('/admin/laporan/pdf', [AdminController::class, 'laporanPdf'])->name('admin.laporan.pdf');
 Route::post('/admin/laporan/send', [AdminController::class, 'sendLaporan'])->name('admin.laporan.send');
 Route::get('/admin/laporan/download/{log}', [AdminController::class, 'downloadLaporan'])->name('admin.laporan.download');
 Route::post('/admin/feedback', [AdminController::class, 'storeFeedback'])->name('admin.feedback');
 Route::post('/admin/user', [AdminController::class, 'storeUser'])->name('admin.user.store');
+Route::put('/admin/user/{user}', [AdminController::class, 'updateUser'])->name('admin.user.update');
+Route::delete('/admin/user/{user}', [AdminController::class, 'destroyUser'])->name('admin.user.destroy');
+Route::post('/admin/siswa', [AdminController::class, 'storeSiswa'])->name('admin.siswa.store');
+Route::put('/admin/siswa/{siswa}', [AdminController::class, 'updateSiswa'])->name('admin.siswa.update');
+Route::delete('/admin/siswa/{siswa}', [AdminController::class, 'destroySiswa'])->name('admin.siswa.destroy');
 
 Route::prefix('admin/api')->group(function () {
     Route::resource('kategori', KategoriController::class)

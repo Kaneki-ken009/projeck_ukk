@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Feedback;
 use App\Models\InputAspirasi;
 use App\Models\LaporanLog;
+use App\Models\Siswa;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -27,7 +28,11 @@ class AdminController extends Controller
     public function menunggu()
     {
         return view('admin.aspirasi_menunggu', [
-            'aspirasi' => InputAspirasi::with(['kategori', 'pengirim'])
+            'aspirasi' => InputAspirasi::with([
+                'kategori',
+                'pengirim',
+                'feedback' => fn ($query) => $query->orderByDesc('created_at'),
+            ])
                 ->where('status', 'menunggu')
                 ->orderBy('tgl_inputaspirasi', 'desc')
                 ->get(),
@@ -37,7 +42,11 @@ class AdminController extends Controller
     public function proses()
     {
         return view('admin.aspirasi_proses', [
-            'aspirasi' => InputAspirasi::with('kategori')
+            'aspirasi' => InputAspirasi::with([
+                'kategori',
+                'pengirim',
+                'feedback' => fn ($query) => $query->orderByDesc('created_at'),
+            ])
                 ->where('status', 'proses')
                 ->orderBy('tgl_inputaspirasi', 'desc')
                 ->get(),
@@ -47,7 +56,11 @@ class AdminController extends Controller
     public function selesai()
     {
         return view('admin.aspirasi_selesai', [
-            'aspirasi' => InputAspirasi::with('kategori')
+            'aspirasi' => InputAspirasi::with([
+                'kategori',
+                'pengirim',
+                'feedback' => fn ($query) => $query->orderByDesc('created_at'),
+            ])
                 ->where('status', 'selesai')
                 ->orderBy('tgl_inputaspirasi', 'desc')
                 ->get(),
@@ -57,7 +70,19 @@ class AdminController extends Controller
     public function users()
     {
         return view('admin.users', [
-            'users' => User::orderBy('username')->get(),
+            'users' => User::whereIn('role', ['admin', 'kepsek'])
+                ->orderBy('username')
+                ->get(),
+        ]);
+    }
+
+    public function siswa()
+    {
+        return view('admin.siswa', [
+            'siswa' => Siswa::orderBy('nama')->get(),
+            'passwordByNisn' => User::where('role', 'siswa')
+                ->whereNotNull('nisn')
+                ->pluck('password', 'nisn'),
         ]);
     }
 
@@ -170,14 +195,89 @@ class AdminController extends Controller
             'username' => 'required|string|unique:users,username',
             'password' => 'required|string|min:4',
             'nama' => 'required|string',
-            'nisn' => 'nullable|string',
+            'nisn' => 'nullable|string|required_if:role,siswa|unique:users,nisn',
             'role' => 'required|in:admin,siswa,kepsek',
         ]);
+
+        if ($data['role'] !== 'siswa') {
+            $data['nisn'] = null;
+        }
 
         $data['password'] = bcrypt($data['password']);
 
         User::create($data);
 
         return back()->with('status', 'User tersimpan.');
+    }
+
+    public function updateUser(Request $request, User $user)
+    {
+        $data = $request->validate([
+            'username' => 'required|string|unique:users,username,' . $user->id,
+            'password' => 'nullable|string|min:4',
+            'nama' => 'required|string',
+            'nisn' => 'nullable|string|required_if:role,siswa|unique:users,nisn,' . $user->id,
+            'role' => 'required|in:admin,siswa,kepsek',
+        ]);
+
+        if ($data['role'] !== 'siswa') {
+            $data['nisn'] = null;
+        }
+
+        if (!empty($data['password'])) {
+            $data['password'] = bcrypt($data['password']);
+        } else {
+            unset($data['password']);
+        }
+
+        $user->update($data);
+
+        return back()->with('status', 'User diperbarui.');
+    }
+
+    public function destroyUser(User $user)
+    {
+        if (auth()->check() && auth()->id() === $user->id) {
+            return back()->with('status', 'User login aktif tidak bisa dihapus.');
+        }
+
+        $user->delete();
+
+        return back()->with('status', 'User dihapus.');
+    }
+
+    public function storeSiswa(Request $request)
+    {
+        $data = $request->validate([
+            'nisn' => 'required|string|unique:siswa,nisn',
+            'nama' => 'required|string',
+            'kelas' => 'nullable|string',
+            'jurusan' => 'nullable|string',
+        ]);
+
+        Siswa::create($data);
+
+        return back()->with('status', 'Data siswa tersimpan.');
+    }
+
+    public function updateSiswa(Request $request, Siswa $siswa)
+    {
+        $data = $request->validate([
+            'nisn' => 'required|string|unique:siswa,nisn,' . $siswa->id_siswa . ',id_siswa',
+            'nama' => 'required|string',
+            'kelas' => 'nullable|string',
+            'jurusan' => 'nullable|string',
+        ]);
+
+        $siswa->update($data);
+
+        return back()->with('status', 'Data siswa diperbarui.');
+    }
+
+    public function destroySiswa(Siswa $siswa)
+    {
+        $siswa->delete();
+
+        return back()->with('status', 'Data siswa dihapus.');
     }
 }

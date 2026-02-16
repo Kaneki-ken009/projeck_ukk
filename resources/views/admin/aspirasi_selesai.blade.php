@@ -8,26 +8,27 @@
         <p class="text-muted mb-0">Aspirasi yang sudah selesai diproses.</p>
     </div>
 
-    <div class="table-responsive">
-        <table class="table table-sm table-striped align-middle">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-sm table-striped align-middle">
             <thead>
                 <tr>
-                    <th>ID</th>
                     <th>NISN</th>
+                    <th>Nama</th>
                     <th>Kategori</th>
                     <th>Lokasi</th>
-                    <th>Keterangan</th>
                     <th>Foto</th>
+                    <th>Aksi</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($aspirasi as $a)
                     <tr>
-                        <td>{{ $a->id_inputaspirasi }}</td>
                         <td>{{ $a->nisn }}</td>
+                        <td>{{ $a->pengirim->nama ?? '-' }}</td>
                         <td>{{ $a->kategori->nama ?? '-' }}</td>
                         <td>{{ $a->lokasi }}</td>
-                        <td>{{ $a->ket }}</td>
                         <td>
                             @if($a->foto)
                                 <img src="{{ asset('storage/'.$a->foto) }}" alt="Foto aspirasi"
@@ -36,13 +37,76 @@
                                 -
                             @endif
                         </td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal"
+                                data-bs-target="#detailModal{{ $a->id_inputaspirasi }}">
+                                Detail
+                            </button>
+                        </td>
                     </tr>
+                    <div class="modal fade" id="detailModal{{ $a->id_inputaspirasi }}" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Detail Aspirasi</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">NISN</label>
+                                            <input type="text" class="form-control" value="{{ $a->nisn }}" disabled>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Nama</label>
+                                            <input type="text" class="form-control" value="{{ $a->pengirim->nama ?? '-' }}" disabled>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Kategori</label>
+                                            <input type="text" class="form-control" value="{{ $a->kategori->nama ?? '-' }}" disabled>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Lokasi</label>
+                                            <input type="text" class="form-control" value="{{ $a->lokasi }}" disabled>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Tanggal</label>
+                                            <input type="text" class="form-control" value="{{ $a->tgl_inputaspirasi }}" disabled>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Status</label>
+                                            <input type="text" class="form-control text-capitalize" value="{{ $a->status }}" disabled>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label">Keterangan</label>
+                                            <textarea class="form-control" rows="3" disabled>{{ $a->ket }}</textarea>
+                                        </div>
+                                    </div>
+                                    @if($a->feedback->isNotEmpty())
+                                        <hr class="my-4">
+                                        <div>
+                                            <label class="form-label">Feedback Terakhir</label>
+                                            <textarea class="form-control" rows="3" disabled>{{ $a->feedback->first()->isi_feedback }}</textarea>
+                                            <small class="text-muted d-block mt-2">
+                                                Diberikan pada {{ optional($a->feedback->first()->created_at)->format('d-m-Y H:i') ?? '-' }}
+                                            </small>
+                                        </div>
+                                    @endif
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Tutup</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 @empty
                     <tr>
-                        <td colspan="6" class="text-muted">Belum ada data.</td>
+                        <td colspan="7" class="text-muted">Belum ada data.</td>
                     </tr>
                 @endforelse
             </tbody>
-        </table>
+                </table>
+            </div>
+        </div>
     </div>
 @endsection
