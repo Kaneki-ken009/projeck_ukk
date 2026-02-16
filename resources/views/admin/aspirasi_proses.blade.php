@@ -21,10 +21,11 @@
                         <option value="">Semua Nama</option>
                     </select>
                 </div>
+                <div class="col-md-4">
+                    <input type="date" id="filterDateProses" class="form-control">
+                </div>
             </div>
-            <div class="col-md-4">
-                <input type="date" id="filterDateProses" class="form-control">
-            </div>
+            
             <div class="table-responsive">
                 <table class="table table-sm table-striped align-middle">
             <thead>

@@ -27,6 +27,17 @@
         .status-default {
             border-top: 4px solid #6c757d;
         }
+        .filter-panel {
+            border: 1px solid rgba(13, 110, 253, .15);
+            background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
+            border-radius: 12px;
+        }
+        .aspirasi-card .card-title {
+            line-height: 1.3;
+        }
+        .aspirasi-card .card-text-ket {
+            min-height: 72px;
+        }
     </style>
 
     <div class="container py-5">
@@ -83,8 +94,9 @@
             @if($aspirasi->isEmpty())
                 <div class="alert alert-info">Belum ada aspirasi.</div>
             @else
-                <div class="card shadow-sm">
-                    <div class="card-body">
+                <div class="card shadow-sm filter-panel mb-4">
+                    <div class="card-body p-3 p-md-4">
+                        <h6 class="mb-3">Filter Aspirasi</h6>
                         <div class="row g-2 mb-3">
                             <div class="col-md-4">
                                 <select id="filterNisnSiswa" class="form-select">
@@ -102,8 +114,15 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <input type="date" id="filterDateSiswa" class="form-control">
+                        <div class="row g-2">
+                            <div class="col-md-4">
+                                <input type="date" id="filterDateSiswa" class="form-control">
+                            </div>
+                            <div class="col-md-4">
+                                <button type="button" id="resetFilterSiswa" class="btn btn-outline-secondary w-100">
+                                    Reset Filter
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -141,22 +160,22 @@
                                         style="height:200px;object-fit:cover">
                                 @endif
 
-                            <div class="card-body">
-                                <div class="d-flex flex-wrap gap-2">
-                                    <span class="badge bg-primary">{{ $a->kategori->nama }}</span>
-                                    @if($isOwner)
-                                        <span class="badge {{ $statusBadgeClass }} text-uppercase">{{ $a->status }}</span>
-                                    @endif
-                                </div>
+                                <div class="card-body d-flex flex-column">
+                                    <div class="d-flex flex-wrap gap-2">
+                                        <span class="badge bg-primary">{{ $a->kategori->nama }}</span>
+                                        @if($isOwner)
+                                            <span class="badge {{ $statusBadgeClass }} text-uppercase">{{ $a->status }}</span>
+                                        @endif
+                                    </div>
                                     <p class="text-muted mb-1 mt-2">
                                         Pengirim: {{ $a->pengirim->nama ?? '-' }} (NISN: {{ $a->nisn }})
                                     </p>
-                                    <h5 class="mt-2">{{ $a->lokasi }}</h5>
-                                    <p>{{ $a->ket }}</p>
+                                    <h5 class="mt-2 card-title">{{ $a->lokasi }}</h5>
+                                    <p class="card-text-ket mb-3">{{ $a->ket }}</p>
 
                                     @auth
                                         @if($feedbackSaya->has($a->id_inputaspirasi))
-                                            <div class="alert alert-success mb-0">
+                                            <div class="alert alert-success mt-auto mb-0">
                                                 {{ $feedbackSaya[$a->id_inputaspirasi]->isi_feedback }}
                                             </div>
                                         @endif
@@ -226,8 +245,9 @@
             const namaSelect = document.getElementById('filterNamaSiswa');
             const statusSelect = document.getElementById('filterStatusSiswa');
             const dateInput = document.getElementById('filterDateSiswa');
+            const resetBtn = document.getElementById('resetFilterSiswa');
             const cards = Array.from(document.querySelectorAll('.aspirasi-card'));
-            if (!nisnSelect || !namaSelect || !statusSelect || !dateInput || cards.length === 0) return;
+            if (!nisnSelect || !namaSelect || !statusSelect || !dateInput || !resetBtn || cards.length === 0) return;
 
             const fillOptions = (selectEl, label, values) => {
                 selectEl.innerHTML = '';
@@ -276,6 +296,13 @@
             namaSelect.addEventListener('change', applyFilter);
             statusSelect.addEventListener('change', applyFilter);
             dateInput.addEventListener('change', applyFilter);
+            resetBtn.addEventListener('click', () => {
+                nisnSelect.value = '';
+                namaSelect.value = '';
+                statusSelect.value = '';
+                dateInput.value = '';
+                applyFilter();
+            });
 
             renderOptions();
         })();

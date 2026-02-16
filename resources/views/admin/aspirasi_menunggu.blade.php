@@ -21,9 +21,9 @@
                         <option value="">Semua Nama</option>
                     </select>
                 </div>
-            </div>
-            <div class="col-md-4">
+                <div class="col-md-4">
                 <input type="date" id="filterDateMenunggu" class="form-control">
+            </div>
             </div>
             <div class="table-responsive">
                 <table class="table table-sm table-striped align-middle">
