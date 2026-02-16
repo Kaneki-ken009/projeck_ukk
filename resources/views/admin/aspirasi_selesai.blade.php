@@ -10,9 +10,20 @@
 
     <div class="card shadow-sm">
         <div class="card-body">
-            <div class="mb-3">
-                <input type="text" id="searchAspirasiSelesai" class="form-control"
-                    placeholder="Cari aspirasi...">
+            <div class="row g-2 mb-3">
+                <div class="col-md-4">
+                    <select id="filterNisnSelesai" class="form-select">
+                        <option value="">Semua NISN</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <select id="filterNamaSelesai" class="form-select">
+                        <option value="">Semua Nama</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                 <input type="date" id="filterDateSelesai" class="form-control">
             </div>
             <div class="table-responsive">
                 <table class="table table-sm table-striped align-middle">
@@ -28,7 +39,11 @@
             </thead>
             <tbody>
                 @forelse($aspirasi as $a)
-                    <tr class="aspirasi-row">
+                    <tr class="aspirasi-row"
+                        data-nisn="{{ $a->nisn }}"
+                        data-nama="{{ $a->pengirim->nama ?? '' }}"
+                        data-status="{{ $a->status }}"
+                        data-tanggal="{{ optional($a->tgl_inputaspirasi)->format('Y-m-d') }}">
                         <td>{{ $a->nisn }}</td>
                         <td>{{ $a->pengirim->nama ?? '-' }}</td>
                         <td>{{ $a->kategori->nama ?? '-' }}</td>
@@ -115,16 +130,62 @@
     </div>
     <script>
         (() => {
-            const input = document.getElementById('searchAspirasiSelesai');
+            const nisnSelect = document.getElementById('filterNisnSelesai');
+            const namaSelect = document.getElementById('filterNamaSelesai');
+            const statusSelect = document.getElementById('filterStatusSelesai');
+            const dateInput = document.getElementById('filterDateSelesai');
             const rows = Array.from(document.querySelectorAll('.aspirasi-row'));
-            if (!input || rows.length === 0) return;
+            if (!nisnSelect || !namaSelect || !statusSelect || !dateInput || rows.length === 0) return;
 
-            input.addEventListener('input', function() {
-                const keyword = this.value.toLowerCase().trim();
+            const fillOptions = (selectEl, label, values) => {
+                selectEl.innerHTML = '';
+                selectEl.add(new Option(label, ''));
+                values.forEach((value) => selectEl.add(new Option(value, value)));
+            };
+
+            const renderOptions = () => {
+                const nisnValues = [...new Set(rows
+                    .map((row) => (row.dataset.nisn || '').trim())
+                    .filter((v) => v !== ''))]
+                    .sort((a, b) => a.localeCompare(b, 'id'));
+                const namaValues = [...new Set(rows
+                    .map((row) => (row.dataset.nama || '').trim())
+                    .filter((v) => v !== ''))]
+                    .sort((a, b) => a.localeCompare(b, 'id'));
+                const statusValues = [...new Set(rows
+                    .map((row) => (row.dataset.status || '').trim())
+                    .filter((v) => v !== ''))]
+                    .sort((a, b) => a.localeCompare(b, 'id'));
+
+                fillOptions(nisnSelect, 'Semua NISN', nisnValues);
+                fillOptions(namaSelect, 'Semua Nama', namaValues);
+                fillOptions(statusSelect, 'Semua Status', statusValues);
+            };
+
+            const applyFilter = () => {
+                const selectedNisn = nisnSelect.value.toLowerCase().trim();
+                const selectedNama = namaSelect.value.toLowerCase().trim();
+                const selectedStatus = statusSelect.value.toLowerCase().trim();
+                const date = dateInput.value;
                 rows.forEach((row) => {
-                    row.style.display = row.innerText.toLowerCase().includes(keyword) ? '' : 'none';
+                    const nisn = (row.dataset.nisn || '').toLowerCase();
+                    const nama = (row.dataset.nama || '').toLowerCase();
+                    const status = (row.dataset.status || '').toLowerCase();
+                    const rowDate = row.dataset.tanggal || '';
+                    const matchNisn = !selectedNisn || nisn === selectedNisn;
+                    const matchNama = !selectedNama || nama === selectedNama;
+                    const matchStatus = !selectedStatus || status === selectedStatus;
+                    const matchDate = !date || rowDate === date;
+                    row.style.display = matchNisn && matchNama && matchStatus && matchDate ? '' : 'none';
                 });
-            });
+            };
+
+            nisnSelect.addEventListener('change', applyFilter);
+            namaSelect.addEventListener('change', applyFilter);
+            statusSelect.addEventListener('change', applyFilter);
+            dateInput.addEventListener('change', applyFilter);
+
+            renderOptions();
         })();
     </script>
 @endsection

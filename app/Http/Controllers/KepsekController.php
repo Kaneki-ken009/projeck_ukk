@@ -20,7 +20,7 @@ class KepsekController extends Controller
     public function menunggu()
     {
         return view('kepsek.aspirasi_menunggu', [
-            'aspirasi' => InputAspirasi::with('kategori')
+            'aspirasi' => InputAspirasi::with(['kategori', 'pengirim'])
                 ->where('status', 'menunggu')
                 ->orderBy('tgl_inputaspirasi', 'desc')
                 ->get(),
@@ -30,7 +30,7 @@ class KepsekController extends Controller
     public function proses()
     {
         return view('kepsek.aspirasi_proses', [
-            'aspirasi' => InputAspirasi::with('kategori')
+            'aspirasi' => InputAspirasi::with(['kategori', 'pengirim'])
                 ->where('status', 'proses')
                 ->orderBy('tgl_inputaspirasi', 'desc')
                 ->get(),
@@ -40,7 +40,7 @@ class KepsekController extends Controller
     public function selesai()
     {
         return view('kepsek.aspirasi_selesai', [
-            'aspirasi' => InputAspirasi::with('kategori')
+            'aspirasi' => InputAspirasi::with(['kategori', 'pengirim'])
                 ->where('status', 'selesai')
                 ->orderBy('tgl_inputaspirasi', 'desc')
                 ->get(),

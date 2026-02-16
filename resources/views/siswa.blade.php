@@ -83,10 +83,31 @@
             @if($aspirasi->isEmpty())
                 <div class="alert alert-info">Belum ada aspirasi.</div>
             @else
-                <div class="mb-3">
-                    <input type="text" id="searchAspirasiSiswa" class="form-control"
-                        placeholder="Cari aspirasi...">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-4">
+                                <select id="filterNisnSiswa" class="form-select">
+                                    <option value="">Semua NISN</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <select id="filterNamaSiswa" class="form-select">
+                                    <option value="">Semua Nama</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <select id="filterStatusSiswa" class="form-select">
+                                    <option value="">Semua Status</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="date" id="filterDateSiswa" class="form-control">
+                        </div>
+                    </div>
                 </div>
+
                 <div class="row g-4">
                     @foreach($aspirasi as $a)
                         @php
@@ -108,7 +129,11 @@
                                 default => 'bg-secondary',
                             };
                         @endphp
-                        <div class="col-md-4 aspirasi-card">
+                        <div class="col-md-4 aspirasi-card"
+                            data-nisn="{{ $a->nisn }}"
+                            data-nama="{{ $a->pengirim->nama ?? '' }}"
+                            data-status="{{ $a->status }}"
+                            data-tanggal="{{ optional($a->tgl_inputaspirasi)->format('Y-m-d') }}">
                             <div class="card card-hover h-100 {{ $isOwner ? $statusCardClass : '' }}">
                                 @if($a->foto)
                                     <img src="{{ asset('storage/'.$a->foto) }}"
@@ -197,16 +222,62 @@
     </div>
     <script>
         (() => {
-            const input = document.getElementById('searchAspirasiSiswa');
+            const nisnSelect = document.getElementById('filterNisnSiswa');
+            const namaSelect = document.getElementById('filterNamaSiswa');
+            const statusSelect = document.getElementById('filterStatusSiswa');
+            const dateInput = document.getElementById('filterDateSiswa');
             const cards = Array.from(document.querySelectorAll('.aspirasi-card'));
-            if (!input || cards.length === 0) return;
+            if (!nisnSelect || !namaSelect || !statusSelect || !dateInput || cards.length === 0) return;
 
-            input.addEventListener('input', function() {
-                const keyword = this.value.toLowerCase().trim();
+            const fillOptions = (selectEl, label, values) => {
+                selectEl.innerHTML = '';
+                selectEl.add(new Option(label, ''));
+                values.forEach((value) => selectEl.add(new Option(value, value)));
+            };
+
+            const renderOptions = () => {
+                const nisnValues = [...new Set(cards
+                    .map((card) => (card.dataset.nisn || '').trim())
+                    .filter((v) => v !== ''))]
+                    .sort((a, b) => a.localeCompare(b, 'id'));
+                const namaValues = [...new Set(cards
+                    .map((card) => (card.dataset.nama || '').trim())
+                    .filter((v) => v !== ''))]
+                    .sort((a, b) => a.localeCompare(b, 'id'));
+                const statusValues = [...new Set(cards
+                    .map((card) => (card.dataset.status || '').trim())
+                    .filter((v) => v !== ''))]
+                    .sort((a, b) => a.localeCompare(b, 'id'));
+
+                fillOptions(nisnSelect, 'Semua NISN', nisnValues);
+                fillOptions(namaSelect, 'Semua Nama', namaValues);
+                fillOptions(statusSelect, 'Semua Status', statusValues);
+            };
+
+            const applyFilter = () => {
+                const selectedNisn = nisnSelect.value.toLowerCase().trim();
+                const selectedNama = namaSelect.value.toLowerCase().trim();
+                const selectedStatus = statusSelect.value.toLowerCase().trim();
+                const date = dateInput.value;
                 cards.forEach((card) => {
-                    card.style.display = card.innerText.toLowerCase().includes(keyword) ? '' : 'none';
+                    const nisn = (card.dataset.nisn || '').toLowerCase();
+                    const nama = (card.dataset.nama || '').toLowerCase();
+                    const status = (card.dataset.status || '').toLowerCase();
+                    const cardDate = card.dataset.tanggal || '';
+                    const matchNisn = !selectedNisn || nisn === selectedNisn;
+                    const matchNama = !selectedNama || nama === selectedNama;
+                    const matchStatus = !selectedStatus || status === selectedStatus;
+                    const matchDate = !date || cardDate === date;
+                    card.style.display = matchNisn && matchNama && matchStatus && matchDate ? '' : 'none';
                 });
-            });
+            };
+
+            nisnSelect.addEventListener('change', applyFilter);
+            namaSelect.addEventListener('change', applyFilter);
+            statusSelect.addEventListener('change', applyFilter);
+            dateInput.addEventListener('change', applyFilter);
+
+            renderOptions();
         })();
     </script>
 @endsection
