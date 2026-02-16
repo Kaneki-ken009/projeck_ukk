@@ -90,6 +90,13 @@ class AdminController extends Controller
     {
         return view('admin.laporan', [
             'logs' => LaporanLog::with('admin')->orderBy('created_at', 'desc')->get(),
+            'aspirasi' => InputAspirasi::with([
+                'kategori',
+                'pengirim',
+                'feedback' => fn ($query) => $query->orderByDesc('created_at'),
+            ])
+                ->orderBy('tgl_inputaspirasi', 'desc')
+                ->get(),
         ]);
     }
 

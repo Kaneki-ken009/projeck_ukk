@@ -56,43 +56,36 @@
 
     <div class="card shadow-sm mt-4">
         <div class="card-body">
-            <h6 class="mb-3">Riwayat Pengiriman</h6>
+            <h6 class="mb-3">Semua Aspirasi (Terbaru)</h6>
             <div class="table-responsive">
                 <table class="table table-sm table-striped align-middle">
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>Waktu</th>
-                            <th>Periode</th>
-                            <th>Admin</th>
-                            <th>Catatan</th>
-                            <th>Aksi</th>
+                            <th>Tanggal</th>
+                            <th>NISN</th>
+                            <th>Nama</th>
+                            <th>Kategori</th>
+                            <th>Lokasi</th>
+                            <th>Status</th>
+                            <th>Feedback Terakhir</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($logs as $i => $log)
+                        @forelse($aspirasi as $i => $a)
                             <tr>
                                 <td>{{ $i + 1 }}</td>
-                                <td>{{ optional($log->created_at)->format('d-m-Y H:i') ?? '-' }}</td>
-                                <td>
-                                    @if($log->period_start && $log->period_end)
-                                        {{ $log->period_start }} s/d {{ $log->period_end }}
-                                    @else
-                                        -
-                                    @endif
-                                </td>
-                                <td>{{ $log->admin?->nama ?? $log->admin_username ?? '-' }}</td>
-                                <td>{{ $log->note ?? '-' }}</td>
-                                <td>
-                                    <a class="btn btn-sm btn-outline-secondary"
-                                        href="{{ route('admin.laporan.download', $log) }}">
-                                        Download
-                                    </a>
-                                </td>
+                                <td>{{ optional($a->tgl_inputaspirasi)->format('d-m-Y H:i') ?? '-' }}</td>
+                                <td>{{ $a->nisn }}</td>
+                                <td>{{ $a->pengirim->nama ?? '-' }}</td>
+                                <td>{{ $a->kategori->nama ?? '-' }}</td>
+                                <td>{{ $a->lokasi }}</td>
+                                <td class="text-capitalize">{{ $a->status }}</td>
+                                <td>{{ optional($a->feedback->first())->isi_feedback ?? '-' }}</td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-muted">Belum ada pengiriman.</td>
+                                <td colspan="8" class="text-muted">Belum ada data aspirasi.</td>
                             </tr>
                         @endforelse
                     </tbody>
