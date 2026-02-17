@@ -12,11 +12,21 @@
         <div class="collapse navbar-collapse" id="mainNavbar">
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('siswa') }}">Beranda</a>
+                    <a class="nav-link" href="{{ route('siswa') }}" onclick="event.preventDefault(); showLanding();">Beranda</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('siswa') }}" onclick="event.preventDefault(); showAspirasi();">Aspirasi</a>
                 </li>
+                @auth
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center gap-2" href="{{ route('siswa') }}" onclick="event.preventDefault(); showHistory();">
+                            <span>History</span>
+                            @if(auth()->user()->role === 'siswa' && (($unreadFeedbackCount ?? 0) > 0))
+                                <span class="badge text-bg-danger rounded-pill">{{ $unreadFeedbackCount }}</span>
+                            @endif
+                        </a>
+                    </li>
+                @endauth
             </ul>
 
             <div class="d-flex ms-lg-3">

@@ -32,6 +32,14 @@ function showAspirasi() {
     hideAll();
     document.getElementById('aspirasi').classList.remove('d-none');
 }
+
+function showHistory() {
+    hideAll();
+    const history = document.getElementById('history');
+    if (history) {
+        history.classList.remove('d-none');
+    }
+}
 </script>
 
 </body>

@@ -34,6 +34,9 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 */
 Route::post('/siswa/aspirasi', [SiswaController::class, 'store'])
     ->middleware('auth');
+Route::post('/siswa/feedback/read', [SiswaController::class, 'readFeedback'])
+    ->middleware('auth')
+    ->name('siswa.feedback.read');
 
 /*
 |--------------------------------------------------------------------------

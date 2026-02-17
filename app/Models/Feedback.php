@@ -15,11 +15,13 @@ class Feedback extends Model
         'id_aspirasi',
         'nisn',
         'isi_feedback',
+        'is_read',
         'created_at',
     ];
 
     protected $casts = [
         'created_at' => 'datetime',
+        'is_read' => 'boolean',
     ];
 
     public function aspirasi(): BelongsTo

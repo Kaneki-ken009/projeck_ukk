@@ -13,6 +13,7 @@ class SiswaController extends Controller
     {
         // SEMUA ASPIRASI (GLOBAL)
         $aspirasi = InputAspirasi::with(['kategori', 'pengirim'])
+            ->orderByRaw("CASE status WHEN 'menunggu' THEN 1 WHEN 'proses' THEN 2 WHEN 'selesai' THEN 3 ELSE 4 END")
             ->orderBy('tgl_inputaspirasi', 'desc')
             ->get();
 
@@ -20,17 +21,32 @@ class SiswaController extends Controller
 
         // FEEDBACK KHUSUS SISWA LOGIN
         $feedbackSaya = collect();
+        $aspirasiSaya = collect();
+        $unreadFeedbackCount = 0;
 
         if (auth()->check() && auth()->user()->role === 'siswa') {
+            $aspirasiSaya = InputAspirasi::with(['kategori', 'pengirim'])
+                ->where('nisn', auth()->user()->nisn)
+                ->orderByRaw("CASE status WHEN 'menunggu' THEN 1 WHEN 'proses' THEN 2 WHEN 'selesai' THEN 3 ELSE 4 END")
+                ->orderBy('tgl_inputaspirasi', 'desc')
+                ->get();
+
             $feedbackSaya = Feedback::where('nisn', auth()->user()->nisn)
+                ->orderByDesc('created_at')
                 ->get()
                 ->keyBy('id_aspirasi');
+
+            $unreadFeedbackCount = Feedback::where('nisn', auth()->user()->nisn)
+                ->where('is_read', false)
+                ->count();
         }
 
         return view('siswa', compact(
             'aspirasi',
+            'aspirasiSaya',
             'kategori',
-            'feedbackSaya'
+            'feedbackSaya',
+            'unreadFeedbackCount'
         ));
     }
 
@@ -59,5 +75,24 @@ class SiswaController extends Controller
         ]);
 
         return back();
+    }
+
+    public function readFeedback(Request $request)
+    {
+        $user = auth()->user();
+        if (!$user || $user->role !== 'siswa') {
+            abort(403);
+        }
+
+        $data = $request->validate([
+            'id_aspirasi' => 'required|integer|exists:inputaspirasi,id_inputaspirasi',
+        ]);
+
+        Feedback::where('nisn', $user->nisn)
+            ->where('id_aspirasi', $data['id_aspirasi'])
+            ->where('is_read', false)
+            ->update(['is_read' => true]);
+
+        return response()->json(['ok' => true]);
     }
 }

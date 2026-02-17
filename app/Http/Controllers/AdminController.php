@@ -190,6 +190,7 @@ class AdminController extends Controller
             'id_aspirasi' => $aspirasi->id_inputaspirasi,
             'nisn' => $aspirasi->nisn,
             'isi_feedback' => $data['isi_feedback'],
+            'is_read' => false,
             'created_at' => now(),
         ]);
 

@@ -11,9 +11,93 @@
             box-shadow: 0 12px 24px rgba(0, 0, 0, .12);
         }
         .hero {
-            background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(130deg, #0d6efd 0%, #0b5ed7 45%, #198754 100%);
             color: #fff;
-            border-radius: 16px;
+            border-radius: 20px;
+        }
+        .hero::before,
+        .hero::after {
+            content: "";
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.14);
+            pointer-events: none;
+        }
+        .hero::before {
+            width: 220px;
+            height: 220px;
+            top: -90px;
+            right: -60px;
+        }
+        .hero::after {
+            width: 160px;
+            height: 160px;
+            bottom: -70px;
+            left: -45px;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+        .hero-chip {
+            background: rgba(255, 255, 255, 0.16);
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            color: #fff;
+            border-radius: 999px;
+            padding: 6px 12px;
+            font-size: .85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: .35rem;
+        }
+        .landing-stat {
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.24);
+            border-radius: 12px;
+            padding: 10px 12px;
+        }
+        .landing-stat .value {
+            font-weight: 700;
+            font-size: 1.1rem;
+            line-height: 1;
+        }
+        .landing-stat .label {
+            font-size: .8rem;
+            opacity: .9;
+        }
+        .feature-card {
+            border: 0;
+            border-radius: 14px;
+            box-shadow: 0 10px 22px rgba(13, 110, 253, .08);
+            height: 100%;
+        }
+        .feature-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+        .feature-1 .feature-icon {
+            background: #e7f1ff;
+            color: #0d6efd;
+        }
+        .feature-2 .feature-icon {
+            background: #fff7e0;
+            color: #b58100;
+        }
+        .feature-3 .feature-icon {
+            background: #e8f7ee;
+            color: #198754;
+        }
+        .quick-info {
+            border: 1px solid #e8ecf3;
+            border-radius: 14px;
+            background: #fff;
         }
         .status-menunggu {
             border-top: 4px solid #dc3545;
@@ -53,36 +137,91 @@
     <div class="container py-5">
         <section id="landing" class="page">
             <div class="hero p-4 p-md-5 mb-4">
-                <h2 class="fw-bold mb-3">Kenapa Menggunakan Aplikasi Aspirasi?</h2>
-                <p class="mb-0">
-                    Aplikasi ini memudahkan siswa menyampaikan aspirasi secara cepat, aman, dan terpantau.
-                    Semua masukan tercatat rapi dan bisa segera ditindaklanjuti oleh pihak sekolah.
-                </p>
+                <div class="hero-content">
+                    <div class="d-flex flex-wrap gap-2 mb-3">
+                        <span class="hero-chip"><i class="bi bi-megaphone"></i> Suara Siswa</span>
+                        <span class="hero-chip"><i class="bi bi-shield-check"></i> Aman dan Tercatat</span>
+                    </div>
+                    <div class="row g-4 align-items-center">
+                        <div class="col-lg-8">
+                            <h2 class="fw-bold mb-3">Sampaikan Aspirasi Sekolah dengan Cara yang Lebih Mudah</h2>
+                            <p class="mb-4">
+                                Gunakan halaman ini untuk menyampaikan masalah fasilitas, lingkungan belajar,
+                                atau usulan perbaikan agar cepat ditangani pihak sekolah.
+                            </p>
+                            <div class="d-flex flex-wrap gap-2">
+                                <button class="btn btn-light btn-sm px-3" onclick="showAspirasi()">
+                                    <i class="bi bi-chat-dots me-1"></i>Lihat Aspirasi
+                                </button>
+                                @auth
+                                    <button class="btn btn-outline-light btn-sm px-3" onclick="showHistory()">
+                                        <i class="bi bi-clock-history me-1"></i>History Saya
+                                    </button>
+                                @else
+                                    <a class="btn btn-outline-light btn-sm px-3" href="{{ route('login.form') }}">
+                                        <i class="bi bi-box-arrow-in-right me-1"></i>Login Dulu
+                                    </a>
+                                @endauth
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="landing-stat mb-2">
+                                <div class="value">Cepat</div>
+                                <div class="label">Pengiriman aspirasi hanya beberapa langkah.</div>
+                            </div>
+                            <div class="landing-stat mb-2">
+                                <div class="value">Transparan</div>
+                                <div class="label">Status dan feedback bisa dipantau.</div>
+                            </div>
+                            <div class="landing-stat">
+                                <div class="value">Terarah</div>
+                                <div class="label">Aspirasi diproses sesuai alur sekolah.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="row g-4">
                 <div class="col-md-4">
-                    <div class="card card-hover h-100">
+                    <div class="card feature-card feature-1">
                         <div class="card-body">
+                            <span class="feature-icon mb-3"><i class="bi bi-lightning-charge-fill"></i></span>
                             <h5 class="card-title">Mudah dan Cepat</h5>
                             <p class="card-text">Kirim aspirasi kapan pun tanpa ribet, langsung dari HP atau laptop.</p>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="card card-hover h-100">
+                    <div class="card feature-card feature-2">
                         <div class="card-body">
+                            <span class="feature-icon mb-3"><i class="bi bi-eye-fill"></i></span>
                             <h5 class="card-title">Transparan</h5>
                             <p class="card-text">Setiap aspirasi tercatat dan bisa dipantau statusnya.</p>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="card card-hover h-100">
+                    <div class="card feature-card feature-3">
                         <div class="card-body">
+                            <span class="feature-icon mb-3"><i class="bi bi-chat-heart-fill"></i></span>
                             <h5 class="card-title">Responsif</h5>
                             <p class="card-text">Admin memberi feedback agar siswa tahu tindak lanjutnya.</p>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="quick-info mt-4 p-3 p-md-4">
+                <div class="row g-3 align-items-center">
+                    <div class="col-md-8">
+                        <h6 class="mb-1">Tips membuat aspirasi yang jelas</h6>
+                        <div class="text-muted small">Tulis lokasi spesifik, jelaskan masalah singkat, dan tambahkan foto jika ada.</div>
+                    </div>
+                    <div class="col-md-4 text-md-end">
+                        <button class="btn btn-primary btn-sm" onclick="showAspirasi()">
+                            <i class="bi bi-send-fill me-1"></i>Mulai Aspirasi
+                        </button>
                     </div>
                 </div>
             </div>
@@ -143,6 +282,8 @@
                             $isOwner = auth()->check()
                                 && auth()->user()->role === 'siswa'
                                 && auth()->user()->nisn === $a->nisn;
+                            $feedbackItem = $feedbackSaya[$a->id_inputaspirasi] ?? null;
+                            $hasUnreadFeedback = $feedbackItem && !$feedbackItem->is_read;
 
                             $statusCardClass = match ($a->status) {
                                 'menunggu' => 'status-menunggu',
@@ -178,17 +319,15 @@
                                     <h5 class="mt-2 card-title">
                                         <i class="bi bi-geo-alt-fill me-1 text-danger"></i>{{ $a->lokasi }}
                                     </h5>
-                                    @auth
-                                        @if($feedbackSaya->has($a->id_inputaspirasi))
-                                            <div class="alert alert-success mb-3">
-                                                {{ $feedbackSaya[$a->id_inputaspirasi]->isi_feedback }}
-                                            </div>
+                                    <button class="btn btn-sm btn-outline-primary mt-auto d-inline-flex align-items-center gap-2" data-bs-toggle="modal"
+                                        data-bs-target="#detailModalSiswa{{ $a->id_inputaspirasi }}"
+                                        data-detail-btn
+                                        data-id-aspirasi="{{ $a->id_inputaspirasi }}"
+                                        data-has-unread="{{ $hasUnreadFeedback ? '1' : '0' }}">
+                                        <span>Detail</span>
+                                        @if($hasUnreadFeedback)
+                                            <span class="badge text-bg-danger">Baru</span>
                                         @endif
-                                    @endauth
-
-                                    <button class="btn btn-sm btn-outline-primary mt-auto" data-bs-toggle="modal"
-                                        data-bs-target="#detailModalSiswa{{ $a->id_inputaspirasi }}">
-                                        Detail
                                     </button>
                                 </div>
                             </div>
@@ -210,7 +349,17 @@
                                                 <div class="mb-2"><strong>Lokasi:</strong> {{ $a->lokasi }}</div>
                                                 <div class="mb-2"><strong>Tanggal:</strong> {{ $a->tgl_inputaspirasi }}</div>
                                                 <div class="mb-2"><strong>Status:</strong> <span class="text-capitalize">{{ $a->status }}</span></div>
-                                                <div class="mb-0"><strong>Keterangan:</strong><br>{{ $a->ket }}</div>
+                                                <div class="mb-3"><strong>Keterangan:</strong><br>{{ $a->ket }}</div>
+                                                @if($isOwner)
+                                                    <div class="mb-0">
+                                                        <strong>Feedback Admin:</strong><br>
+                                                        @if($feedbackItem)
+                                                            <span>{{ $feedbackItem->isi_feedback }}</span>
+                                                        @else
+                                                            <span class="text-muted">Belum ada feedback.</span>
+                                                        @endif
+                                                    </div>
+                                                @endif
                                             </div>
                                             <div class="col-md-5">
                                                 @if($a->foto)
@@ -233,6 +382,124 @@
                     @endforeach
                 </div>
             @endif
+        </section>
+
+        <section id="history" class="page d-none">
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <h4 class="mb-0">History Aspirasi Saya</h4>
+                @auth
+                    <span class="badge text-bg-primary">Milik Saya</span>
+                @endauth
+            </div>
+
+            @guest
+                <div class="alert alert-info mb-0">Login sebagai siswa untuk melihat history aspirasi Anda.</div>
+            @endguest
+
+            @auth
+                @if(auth()->user()->role !== 'siswa')
+                    <div class="alert alert-warning mb-0">History hanya tersedia untuk akun siswa.</div>
+                @elseif($aspirasiSaya->isEmpty())
+                    <div class="alert alert-info mb-0">Belum ada aspirasi yang Anda kirim.</div>
+                @else
+                    <div class="row g-4">
+                        @foreach($aspirasiSaya as $a)
+                            @php
+                                $statusCardClass = match ($a->status) {
+                                    'menunggu' => 'status-menunggu',
+                                    'proses' => 'status-proses',
+                                    'selesai' => 'status-selesai',
+                                    default => 'status-default',
+                                };
+
+                                $statusBadgeClass = match ($a->status) {
+                                    'menunggu' => 'bg-danger',
+                                    'proses' => 'bg-warning text-dark',
+                                    'selesai' => 'bg-success',
+                                    default => 'bg-secondary',
+                                };
+
+                                $feedbackItem = $feedbackSaya[$a->id_inputaspirasi] ?? null;
+                                $hasUnreadFeedback = $feedbackItem && !$feedbackItem->is_read;
+                            @endphp
+                            <div class="col-md-4">
+                                <div class="card card-hover h-100 {{ $statusCardClass }}">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex flex-wrap gap-2">
+                                            <span class="badge bg-primary">{{ $a->kategori->nama }}</span>
+                                            <span class="badge {{ $statusBadgeClass }} text-uppercase">{{ $a->status }}</span>
+                                        </div>
+                                        <p class="text-muted mb-1 mt-2">
+                                            <i class="bi bi-person-circle me-1"></i>
+                                            Pengirim: {{ $a->pengirim->nama ?? '-' }} (NISN: {{ $a->nisn }})
+                                        </p>
+                                        <h5 class="mt-2 card-title">
+                                            <i class="bi bi-geo-alt-fill me-1 text-danger"></i>{{ $a->lokasi }}
+                                        </h5>
+
+                                        <button class="btn btn-sm btn-outline-primary mt-auto d-inline-flex align-items-center gap-2"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#detailModalHistory{{ $a->id_inputaspirasi }}"
+                                            data-detail-btn
+                                            data-id-aspirasi="{{ $a->id_inputaspirasi }}"
+                                            data-has-unread="{{ $hasUnreadFeedback ? '1' : '0' }}">
+                                            <span>Detail</span>
+                                            @if($hasUnreadFeedback)
+                                                <span class="badge text-bg-danger">Baru</span>
+                                            @endif
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="modal fade" id="detailModalHistory{{ $a->id_inputaspirasi }}" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Detail Aspirasi</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row g-3">
+                                                <div class="col-md-7">
+                                                    <div class="mb-2"><strong>NISN:</strong> {{ $a->nisn }}</div>
+                                                    <div class="mb-2"><strong>Nama:</strong> {{ $a->pengirim->nama ?? '-' }}</div>
+                                                    <div class="mb-2"><strong>Kategori:</strong> {{ $a->kategori->nama ?? '-' }}</div>
+                                                    <div class="mb-2"><strong>Lokasi:</strong> {{ $a->lokasi }}</div>
+                                                    <div class="mb-2"><strong>Tanggal:</strong> {{ $a->tgl_inputaspirasi }}</div>
+                                                    <div class="mb-2"><strong>Status:</strong> <span class="text-capitalize">{{ $a->status }}</span></div>
+                                                    <div class="mb-3"><strong>Keterangan:</strong><br>{{ $a->ket }}</div>
+                                                    <div class="mb-0">
+                                                        <strong>Feedback Admin:</strong><br>
+                                                        @if($feedbackItem)
+                                                            <span>{{ $feedbackItem->isi_feedback }}</span>
+                                                        @else
+                                                            <span class="text-muted">Belum ada feedback.</span>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-5">
+                                                    @if($a->foto)
+                                                        <img src="{{ asset('storage/'.$a->foto) }}"
+                                                            class="img-fluid rounded border"
+                                                            alt="Foto aspirasi"
+                                                            style="width:100%;height:260px;object-fit:cover;">
+                                                    @else
+                                                        <div class="foto-placeholder">Tidak ada foto</div>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Tutup</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+            @endauth
         </section>
     </div>
 
@@ -352,6 +619,47 @@
             });
 
             renderOptions();
+
+            const detailButtons = document.querySelectorAll('[data-detail-btn]');
+            const csrfToken = '{{ csrf_token() }}';
+            const navUnreadBadge = document.querySelector('.navbar .badge.text-bg-danger.rounded-pill');
+            detailButtons.forEach((btn) => {
+                btn.addEventListener('click', () => {
+                    if (btn.dataset.hasUnread !== '1') {
+                        return;
+                    }
+
+                    fetch('{{ route('siswa.feedback.read') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            id_aspirasi: btn.dataset.idAspirasi,
+                        }),
+                    }).then(() => {
+                        btn.dataset.hasUnread = '0';
+                        const btnBadge = btn.querySelector('.badge');
+                        if (btnBadge) {
+                            btnBadge.remove();
+                        }
+
+                        if (navUnreadBadge) {
+                            const current = parseInt(navUnreadBadge.textContent || '0', 10);
+                            if (!Number.isNaN(current)) {
+                                const next = Math.max(0, current - 1);
+                                if (next === 0) {
+                                    navUnreadBadge.remove();
+                                } else {
+                                    navUnreadBadge.textContent = String(next);
+                                }
+                            }
+                        }
+                    }).catch(() => {});
+                });
+            });
         })();
     </script>
 @endsection
