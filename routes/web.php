@@ -89,4 +89,5 @@ Route::get('/kepsek/aspirasi/menunggu', [KepsekController::class, 'menunggu'])->
 Route::get('/kepsek/aspirasi/proses', [KepsekController::class, 'proses'])->name('kepsek.aspirasi.proses');
 Route::get('/kepsek/aspirasi/selesai', [KepsekController::class, 'selesai'])->name('kepsek.aspirasi.selesai');
 Route::get('/kepsek/laporan', [KepsekController::class, 'laporan'])->name('kepsek.laporan');
+Route::get('/kepsek/laporan/pdf', [KepsekController::class, 'laporanPdf'])->name('kepsek.laporan.pdf');
 Route::get('/kepsek/laporan/download/{log}', [AdminController::class, 'downloadLaporan'])->name('kepsek.laporan.download');

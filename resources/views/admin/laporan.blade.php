@@ -68,7 +68,7 @@
                             <th>Kategori</th>
                             <th>Lokasi</th>
                             <th>Status</th>
-                            <th>Feedback Terakhir</th>
+                            <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -81,8 +81,63 @@
                                 <td>{{ $a->kategori->nama ?? '-' }}</td>
                                 <td>{{ $a->lokasi }}</td>
                                 <td class="text-capitalize">{{ $a->status }}</td>
-                                <td>{{ optional($a->feedback->first())->isi_feedback ?? '-' }}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal"
+                                        data-bs-target="#detailAspirasiLaporan{{ $a->id_inputaspirasi }}">
+                                        Detail
+                                    </button>
+                                </td>
                             </tr>
+
+                            <div class="modal fade" id="detailAspirasiLaporan{{ $a->id_inputaspirasi }}" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Detail Aspirasi</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row g-3">
+                                                <div class="col-md-6">
+                                                    <label class="form-label">NISN</label>
+                                                    <input type="text" class="form-control" value="{{ $a->nisn }}" disabled>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Nama</label>
+                                                    <input type="text" class="form-control" value="{{ $a->pengirim->nama ?? '-' }}" disabled>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Kategori</label>
+                                                    <input type="text" class="form-control" value="{{ $a->kategori->nama ?? '-' }}" disabled>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Lokasi</label>
+                                                    <input type="text" class="form-control" value="{{ $a->lokasi }}" disabled>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Tanggal</label>
+                                                    <input type="text" class="form-control" value="{{ optional($a->tgl_inputaspirasi)->format('d-m-Y H:i') ?? '-' }}" disabled>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Status</label>
+                                                    <input type="text" class="form-control text-capitalize" value="{{ $a->status }}" disabled>
+                                                </div>
+                                                <div class="col-12">
+                                                    <label class="form-label">Keterangan</label>
+                                                    <textarea class="form-control" rows="3" disabled>{{ $a->ket }}</textarea>
+                                                </div>
+                                                <div class="col-12">
+                                                    <label class="form-label">Feedback Terakhir</label>
+                                                    <textarea class="form-control" rows="3" disabled>{{ optional($a->feedback->first())->isi_feedback ?? '-' }}</textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Tutup</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         @empty
                             <tr>
                                 <td colspan="8" class="text-muted">Belum ada data aspirasi.</td>
