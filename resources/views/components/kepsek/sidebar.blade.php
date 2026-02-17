@@ -8,21 +8,31 @@
     </div>
 
     <nav class="nav flex-column gap-1">
-        <a href="{{ route('kepsek.dashboard') }}" class="nav-link text-white">Dashboard</a>
+        <a href="{{ route('kepsek.dashboard') }}" class="nav-link text-white">
+            <i class="bi bi-speedometer2 me-2"></i>Dashboard
+        </a>
 
         <button class="btn btn-dark text-start d-flex align-items-center justify-content-between px-2 py-2"
             data-bs-toggle="collapse" data-bs-target="#menuAspirasiKepsek" aria-expanded="false">
-            <span>Aspirasi</span>
-            <span class="text-white-50">▾</span>
+            <span><i class="bi bi-chat-left-text me-2"></i>Aspirasi</span>
+            <span class="text-white-50"><i class="bi bi-chevron-down"></i></span>
         </button>
         <div class="collapse show" id="menuAspirasiKepsek">
             <div class="nav flex-column ms-3">
-                <a class="nav-link text-white-50" href="{{ route('kepsek.aspirasi.menunggu') }}">Menunggu</a>
-                <a class="nav-link text-white-50" href="{{ route('kepsek.aspirasi.proses') }}">Proses</a>
-                <a class="nav-link text-white-50" href="{{ route('kepsek.aspirasi.selesai') }}">History</a>
+                <a class="nav-link text-white-50" href="{{ route('kepsek.aspirasi.menunggu') }}">
+                    <i class="bi bi-hourglass-split me-2"></i>Menunggu
+                </a>
+                <a class="nav-link text-white-50" href="{{ route('kepsek.aspirasi.proses') }}">
+                    <i class="bi bi-tools me-2"></i>Proses
+                </a>
+                <a class="nav-link text-white-50" href="{{ route('kepsek.aspirasi.selesai') }}">
+                    <i class="bi bi-clock-history me-2"></i>History
+                </a>
             </div>
         </div>
 
-        <a href="{{ route('kepsek.laporan') }}" class="nav-link text-white">Laporan</a>
+        <a href="{{ route('kepsek.laporan') }}" class="nav-link text-white">
+            <i class="bi bi-file-earmark-text me-2"></i>Laporan
+        </a>
     </nav>
 </aside>

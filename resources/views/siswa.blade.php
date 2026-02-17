@@ -38,6 +38,16 @@
         .aspirasi-card .card-text-ket {
             min-height: 72px;
         }
+        .foto-placeholder {
+            height: 260px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            color: #1e3a8a;
+            font-weight: 600;
+            border-radius: 8px;
+        }
     </style>
 
     <div class="container py-5">
@@ -154,12 +164,6 @@
                             data-status="{{ $a->status }}"
                             data-tanggal="{{ optional($a->tgl_inputaspirasi)->format('Y-m-d') }}">
                             <div class="card card-hover h-100 {{ $isOwner ? $statusCardClass : '' }}">
-                                @if($a->foto)
-                                    <img src="{{ asset('storage/'.$a->foto) }}"
-                                        class="card-img-top"
-                                        style="height:200px;object-fit:cover">
-                                @endif
-
                                 <div class="card-body d-flex flex-column">
                                     <div class="d-flex flex-wrap gap-2">
                                         <span class="badge bg-primary">{{ $a->kategori->nama }}</span>
@@ -168,18 +172,61 @@
                                         @endif
                                     </div>
                                     <p class="text-muted mb-1 mt-2">
+                                        <i class="bi bi-person-circle me-1"></i>
                                         Pengirim: {{ $a->pengirim->nama ?? '-' }} (NISN: {{ $a->nisn }})
                                     </p>
-                                    <h5 class="mt-2 card-title">{{ $a->lokasi }}</h5>
-                                    <p class="card-text-ket mb-3">{{ $a->ket }}</p>
-
+                                    <h5 class="mt-2 card-title">
+                                        <i class="bi bi-geo-alt-fill me-1 text-danger"></i>{{ $a->lokasi }}
+                                    </h5>
                                     @auth
                                         @if($feedbackSaya->has($a->id_inputaspirasi))
-                                            <div class="alert alert-success mt-auto mb-0">
+                                            <div class="alert alert-success mb-3">
                                                 {{ $feedbackSaya[$a->id_inputaspirasi]->isi_feedback }}
                                             </div>
                                         @endif
                                     @endauth
+
+                                    <button class="btn btn-sm btn-outline-primary mt-auto" data-bs-toggle="modal"
+                                        data-bs-target="#detailModalSiswa{{ $a->id_inputaspirasi }}">
+                                        Detail
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal fade" id="detailModalSiswa{{ $a->id_inputaspirasi }}" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Detail Aspirasi</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row g-3">
+                                            <div class="col-md-7">
+                                                <div class="mb-2"><strong>NISN:</strong> {{ $a->nisn }}</div>
+                                                <div class="mb-2"><strong>Nama:</strong> {{ $a->pengirim->nama ?? '-' }}</div>
+                                                <div class="mb-2"><strong>Kategori:</strong> {{ $a->kategori->nama ?? '-' }}</div>
+                                                <div class="mb-2"><strong>Lokasi:</strong> {{ $a->lokasi }}</div>
+                                                <div class="mb-2"><strong>Tanggal:</strong> {{ $a->tgl_inputaspirasi }}</div>
+                                                <div class="mb-2"><strong>Status:</strong> <span class="text-capitalize">{{ $a->status }}</span></div>
+                                                <div class="mb-0"><strong>Keterangan:</strong><br>{{ $a->ket }}</div>
+                                            </div>
+                                            <div class="col-md-5">
+                                                @if($a->foto)
+                                                    <img src="{{ asset('storage/'.$a->foto) }}"
+                                                        class="img-fluid rounded border"
+                                                        alt="Foto aspirasi"
+                                                        style="width:100%;height:260px;object-fit:cover;">
+                                                @else
+                                                    <div class="foto-placeholder">Tidak ada foto</div>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Tutup</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>

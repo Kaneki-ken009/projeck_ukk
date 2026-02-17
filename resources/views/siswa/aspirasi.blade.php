@@ -4,6 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>siswa - dashboard</title>
+    <style>
+        .foto-placeholder {
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            color: #1e3a8a;
+            font-weight: 600;
+        }
+    </style>
 </head>
 <body>
     <div class="container py-5">
@@ -44,7 +55,9 @@
                         @if($a->foto)
                             <img src="{{ asset('storage/'.$a->foto) }}"
                                 class="card-img-top"
-                                style="height:20px;object-fit:cover">
+                                style="height:120px;object-fit:cover">
+                        @else
+                            <div class="foto-placeholder">Tidak ada foto</div>
                         @endif
 
                         <div class="card-body">

@@ -54,7 +54,10 @@
                                 <img src="{{ asset('storage/'.$a->foto) }}" alt="Foto aspirasi"
                                     style="width:100px;height:100px;object-fit:cover;border-radius:4px;">
                             @else
-                                -
+                                <div class="d-flex align-items-center justify-content-center text-primary fw-semibold"
+                                    style="width:100px;height:100px;border-radius:4px;background:linear-gradient(135deg,#dbeafe 0%,#bfdbfe 100%);">
+                                    Tidak ada foto
+                                </div>
                             @endif
                         </td>
                         <td>
