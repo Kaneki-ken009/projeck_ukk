@@ -25,11 +25,4 @@
 
         <a href="{{ route('kepsek.laporan') }}" class="nav-link text-white">Laporan</a>
     </nav>
-
-    <div class="mt-4">
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
-            <button class="btn btn-outline-light w-100" type="submit">Logout</button>
-        </form>
-    </div>
 </aside>
