@@ -94,8 +94,9 @@
                                                 </div>
                                                 <div class="mb-2">
                                                     <label class="form-label">NISN</label>
-                                                    <input type="text" class="form-control js-nisn-input" name="nisn"
-                                                        value="{{ $u->nisn }}">
+                                                    <input type="text" class="form-control js-nisn-input js-nisn-user-check" name="nisn"
+                                                        value="{{ $u->nisn }}" data-current-nisn="{{ $u->nisn ?? '' }}">
+                                                    <div class="invalid-feedback">NISN sudah digunakan.</div>
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
@@ -150,7 +151,8 @@
                         </div>
                         <div class="mb-2">
                             <label class="form-label">NISN</label>
-                            <input type="text" class="form-control js-nisn-input" name="nisn">
+                            <input type="text" class="form-control js-nisn-input js-nisn-user-check" name="nisn" data-current-nisn="">
+                            <div class="invalid-feedback">NISN sudah digunakan.</div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -163,20 +165,68 @@
     </div>
 
     <script>
+        const usedUserNisn = @json($usedUserNisn);
+
+        const normalizeNisn = (value) => (value || '').trim().toLowerCase();
+        const validateUserNisnInput = (input) => {
+            if (!input || input.disabled) {
+                return true;
+            }
+
+            const value = normalizeNisn(input.value);
+            const currentValue = normalizeNisn(input.dataset.currentNisn);
+            if (!value || value === currentValue) {
+                input.classList.remove('is-invalid');
+                input.setCustomValidity('');
+                return true;
+            }
+
+            const duplicated = usedUserNisn.some((nisn) => normalizeNisn(nisn) === value);
+            if (duplicated) {
+                input.classList.add('is-invalid');
+                input.setCustomValidity('NISN sudah digunakan.');
+                return false;
+            }
+
+            input.classList.remove('is-invalid');
+            input.setCustomValidity('');
+            return true;
+        };
+
         document.querySelectorAll('.modal').forEach(function(modal) {
             const roleSelect = modal.querySelector('.js-role-select');
             const nisnInput = modal.querySelector('.js-nisn-input');
+            const form = modal.querySelector('form');
             if (!roleSelect || !nisnInput) return;
 
             const syncNisnState = function() {
                 const isSiswa = roleSelect.value === 'siswa';
                 nisnInput.disabled = !isSiswa;
                 nisnInput.required = isSiswa;
-                if (!isSiswa) nisnInput.value = '';
+                if (!isSiswa) {
+                    nisnInput.value = '';
+                    nisnInput.classList.remove('is-invalid');
+                    nisnInput.setCustomValidity('');
+                }
             };
 
             syncNisnState();
             roleSelect.addEventListener('change', syncNisnState);
+            nisnInput.addEventListener('blur', function() {
+                validateUserNisnInput(nisnInput);
+            });
+            nisnInput.addEventListener('input', function() {
+                nisnInput.classList.remove('is-invalid');
+                nisnInput.setCustomValidity('');
+            });
+            if (form) {
+                form.addEventListener('submit', function(event) {
+                    if (!validateUserNisnInput(nisnInput)) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                });
+            }
         });
     </script>
 @endsection

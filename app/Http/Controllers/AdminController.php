@@ -73,6 +73,9 @@ class AdminController extends Controller
             'users' => User::whereIn('role', ['admin', 'kepsek'])
                 ->orderBy('username')
                 ->get(),
+            'usedUserNisn' => User::whereNotNull('nisn')
+                ->pluck('nisn')
+                ->values(),
         ]);
     }
 
@@ -83,6 +86,8 @@ class AdminController extends Controller
             'passwordByNisn' => User::where('role', 'siswa')
                 ->whereNotNull('nisn')
                 ->pluck('password', 'nisn'),
+            'usedSiswaNisn' => Siswa::pluck('nisn')
+                ->values(),
         ]);
     }
 

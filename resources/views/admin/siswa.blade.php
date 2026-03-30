@@ -78,8 +78,9 @@
                                             <div class="modal-body">
                                                 <div class="mb-2">
                                                     <label class="form-label">NISN</label>
-                                                    <input type="text" class="form-control" name="nisn"
-                                                        value="{{ $s->nisn }}" required>
+                                                    <input type="text" class="form-control js-siswa-nisn-check" name="nisn"
+                                                        value="{{ $s->nisn }}" data-current-nisn="{{ $s->nisn }}" required>
+                                                    <div class="invalid-feedback">NISN sudah digunakan.</div>
                                                 </div>
                                                 <div class="mb-2">
                                                     <label class="form-label">Nama</label>
@@ -129,7 +130,8 @@
                     <div class="modal-body">
                         <div class="mb-2">
                             <label class="form-label">NISN</label>
-                            <input type="text" class="form-control" name="nisn" required>
+                            <input type="text" class="form-control js-siswa-nisn-check" name="nisn" data-current-nisn="" required>
+                            <div class="invalid-feedback">NISN sudah digunakan.</div>
                         </div>
                         <div class="mb-2">
                             <label class="form-label">Nama</label>
@@ -152,4 +154,55 @@
             </div>
         </div>
     </div>
+
+    <script>
+        const usedSiswaNisn = @json($usedSiswaNisn);
+        const normalizeSiswaNisn = (value) => (value || '').trim().toLowerCase();
+
+        const validateSiswaNisnInput = (input) => {
+            if (!input) {
+                return true;
+            }
+
+            const value = normalizeSiswaNisn(input.value);
+            const currentValue = normalizeSiswaNisn(input.dataset.currentNisn);
+            if (!value || value === currentValue) {
+                input.classList.remove('is-invalid');
+                input.setCustomValidity('');
+                return true;
+            }
+
+            const duplicated = usedSiswaNisn.some((nisn) => normalizeSiswaNisn(nisn) === value);
+            if (duplicated) {
+                input.classList.add('is-invalid');
+                input.setCustomValidity('NISN sudah digunakan.');
+                return false;
+            }
+
+            input.classList.remove('is-invalid');
+            input.setCustomValidity('');
+            return true;
+        };
+
+        document.querySelectorAll('.js-siswa-nisn-check').forEach((input) => {
+            input.addEventListener('blur', () => {
+                validateSiswaNisnInput(input);
+            });
+
+            input.addEventListener('input', () => {
+                input.classList.remove('is-invalid');
+                input.setCustomValidity('');
+            });
+
+            const form = input.closest('form');
+            if (form) {
+                form.addEventListener('submit', (event) => {
+                    if (!validateSiswaNisnInput(input)) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                });
+            }
+        });
+    </script>
 @endsection
