@@ -73,6 +73,8 @@ class AdminController extends Controller
             'users' => User::whereIn('role', ['admin', 'kepsek'])
                 ->orderBy('username')
                 ->get(),
+            'usedUsernames' => User::pluck('username')
+                ->values(),
             'usedUserNisn' => User::whereNotNull('nisn')
                 ->pluck('nisn')
                 ->values(),

@@ -72,8 +72,9 @@
                                             <div class="modal-body">
                                                 <div class="mb-2">
                                                     <label class="form-label">Username</label>
-                                                    <input type="text" class="form-control" name="username"
-                                                        value="{{ $u->username }}" required>
+                                                    <input type="text" class="form-control js-username-check" name="username"
+                                                        value="{{ $u->username }}" data-current-username="{{ $u->username }}" required>
+                                                    <div class="invalid-feedback">Username sudah digunakan.</div>
                                                 </div>
                                                 <div class="mb-2">
                                                     <label class="form-label">Password (opsional)</label>
@@ -131,7 +132,8 @@
                     <div class="modal-body">
                         <div class="mb-2">
                             <label class="form-label">Username</label>
-                            <input type="text" class="form-control" name="username" required>
+                            <input type="text" class="form-control js-username-check" name="username" data-current-username="" required>
+                            <div class="invalid-feedback">Username sudah digunakan.</div>
                         </div>
                         <div class="mb-2">
                             <label class="form-label">Password</label>
@@ -165,23 +167,48 @@
     </div>
 
     <script>
+        const usedUsernames = @json($usedUsernames);
         const usedUserNisn = @json($usedUserNisn);
 
-        const normalizeNisn = (value) => (value || '').trim().toLowerCase();
-        const validateUserNisnInput = (input) => {
-            if (!input || input.disabled) {
+        const normalizeValue = (value) => (value || '').trim().toLowerCase();
+        const validateUsernameInput = (input) => {
+            if (!input) {
                 return true;
             }
 
-            const value = normalizeNisn(input.value);
-            const currentValue = normalizeNisn(input.dataset.currentNisn);
+            const value = normalizeValue(input.value);
+            const currentValue = normalizeValue(input.dataset.currentUsername);
             if (!value || value === currentValue) {
                 input.classList.remove('is-invalid');
                 input.setCustomValidity('');
                 return true;
             }
 
-            const duplicated = usedUserNisn.some((nisn) => normalizeNisn(nisn) === value);
+            const duplicated = usedUsernames.some((username) => normalizeValue(username) === value);
+            if (duplicated) {
+                input.classList.add('is-invalid');
+                input.setCustomValidity('Username sudah digunakan.');
+                return false;
+            }
+
+            input.classList.remove('is-invalid');
+            input.setCustomValidity('');
+            return true;
+        };
+        const validateUserNisnInput = (input) => {
+            if (!input || input.disabled) {
+                return true;
+            }
+
+            const value = normalizeValue(input.value);
+            const currentValue = normalizeValue(input.dataset.currentNisn);
+            if (!value || value === currentValue) {
+                input.classList.remove('is-invalid');
+                input.setCustomValidity('');
+                return true;
+            }
+
+            const duplicated = usedUserNisn.some((nisn) => normalizeValue(nisn) === value);
             if (duplicated) {
                 input.classList.add('is-invalid');
                 input.setCustomValidity('NISN sudah digunakan.');
@@ -196,8 +223,9 @@
         document.querySelectorAll('.modal').forEach(function(modal) {
             const roleSelect = modal.querySelector('.js-role-select');
             const nisnInput = modal.querySelector('.js-nisn-input');
+            const usernameInput = modal.querySelector('.js-username-check');
             const form = modal.querySelector('form');
-            if (!roleSelect || !nisnInput) return;
+            if (!roleSelect || !nisnInput || !usernameInput) return;
 
             const syncNisnState = function() {
                 const isSiswa = roleSelect.value === 'siswa';
@@ -212,6 +240,13 @@
 
             syncNisnState();
             roleSelect.addEventListener('change', syncNisnState);
+            usernameInput.addEventListener('blur', function() {
+                validateUsernameInput(usernameInput);
+            });
+            usernameInput.addEventListener('input', function() {
+                usernameInput.classList.remove('is-invalid');
+                usernameInput.setCustomValidity('');
+            });
             nisnInput.addEventListener('blur', function() {
                 validateUserNisnInput(nisnInput);
             });
@@ -221,7 +256,9 @@
             });
             if (form) {
                 form.addEventListener('submit', function(event) {
-                    if (!validateUserNisnInput(nisnInput)) {
+                    const validUsername = validateUsernameInput(usernameInput);
+                    const validNisn = validateUserNisnInput(nisnInput);
+                    if (!validUsername || !validNisn) {
                         event.preventDefault();
                         event.stopPropagation();
                     }
