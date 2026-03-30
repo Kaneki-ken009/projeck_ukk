@@ -45,8 +45,7 @@
                                 <td>{{ $s->jurusan ?? '-' }}</td>
                                 <td style="min-width: 170px;">
                                     @if(isset($passwordByNisn[$s->nisn]))
-                                        <input type="password" class="form-control form-control-sm"
-                                            value="{{ $passwordByNisn[$s->nisn] }}" readonly>
+                                        <span class="badge text-bg-success">Sudah diatur</span>
                                     @else
                                         -
                                     @endif
@@ -81,6 +80,12 @@
                                                     <input type="text" class="form-control js-siswa-nisn-check" name="nisn"
                                                         value="{{ $s->nisn }}" data-current-nisn="{{ $s->nisn }}" required>
                                                     <div class="invalid-feedback">NISN sudah digunakan.</div>
+                                                    <div class="form-text">Username login siswa akan mengikuti NISN.</div>
+                                                </div>
+                                                <div class="mb-2">
+                                                    <label class="form-label">Password (opsional)</label>
+                                                    <input type="text" class="form-control" name="password"
+                                                        placeholder="Isi jika ingin mengganti password">
                                                 </div>
                                                 <div class="mb-2">
                                                     <label class="form-label">Nama</label>
@@ -132,6 +137,11 @@
                             <label class="form-label">NISN</label>
                             <input type="text" class="form-control js-siswa-nisn-check" name="nisn" data-current-nisn="" required>
                             <div class="invalid-feedback">NISN sudah digunakan.</div>
+                            <div class="form-text">Username login siswa akan mengikuti NISN.</div>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Password</label>
+                            <input type="text" class="form-control" name="password" required>
                         </div>
                         <div class="mb-2">
                             <label class="form-label">Nama</label>

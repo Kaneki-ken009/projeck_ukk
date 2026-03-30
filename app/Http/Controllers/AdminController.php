@@ -10,6 +10,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
@@ -264,33 +265,97 @@ class AdminController extends Controller
     public function storeSiswa(Request $request)
     {
         $data = $request->validate([
-            'nisn' => 'required|string|unique:siswa,nisn',
+            'nisn' => [
+                'required',
+                'string',
+                'unique:siswa,nisn',
+                'unique:users,username',
+                'unique:users,nisn',
+            ],
+            'password' => 'required|string|min:4',
             'nama' => 'required|string',
             'kelas' => 'nullable|string',
             'jurusan' => 'nullable|string',
         ]);
 
-        Siswa::create($data);
+        Siswa::create([
+            'nisn' => $data['nisn'],
+            'nama' => $data['nama'],
+            'kelas' => $data['kelas'] ?? null,
+            'jurusan' => $data['jurusan'] ?? null,
+        ]);
+
+        User::create([
+            'username' => $data['nisn'],
+            'password' => $data['password'],
+            'nama' => $data['nama'],
+            'nisn' => $data['nisn'],
+            'role' => 'siswa',
+        ]);
 
         return back()->with('status', 'Data siswa tersimpan.');
     }
 
     public function updateSiswa(Request $request, Siswa $siswa)
     {
+        $oldNisn = $siswa->nisn;
+        $linkedUser = User::where('role', 'siswa')
+            ->where('nisn', $oldNisn)
+            ->first();
+
         $data = $request->validate([
-            'nisn' => 'required|string|unique:siswa,nisn,' . $siswa->id_siswa . ',id_siswa',
+            'password' => 'nullable|string|min:4',
             'nama' => 'required|string',
             'kelas' => 'nullable|string',
             'jurusan' => 'nullable|string',
+            'nisn' => [
+                'required',
+                'string',
+                'unique:siswa,nisn,' . $siswa->id_siswa . ',id_siswa',
+                Rule::unique('users', 'username')->ignore($linkedUser?->id),
+                Rule::unique('users', 'nisn')->ignore($linkedUser?->id),
+            ],
         ]);
 
-        $siswa->update($data);
+        $siswa->update([
+            'nisn' => $data['nisn'],
+            'nama' => $data['nama'],
+            'kelas' => $data['kelas'] ?? null,
+            'jurusan' => $data['jurusan'] ?? null,
+        ]);
+
+        if ($linkedUser) {
+            $userData = [
+                'username' => $data['nisn'],
+                'nama' => $data['nama'],
+                'nisn' => $data['nisn'],
+                'role' => 'siswa',
+            ];
+
+            if (!empty($data['password'])) {
+                $userData['password'] = $data['password'];
+            }
+
+            $linkedUser->update($userData);
+        } else {
+            User::create([
+                'username' => $data['nisn'],
+                'password' => $data['password'] ?: $data['nisn'],
+                'nama' => $data['nama'],
+                'nisn' => $data['nisn'],
+                'role' => 'siswa',
+            ]);
+        }
 
         return back()->with('status', 'Data siswa diperbarui.');
     }
 
     public function destroySiswa(Siswa $siswa)
     {
+        User::where('role', 'siswa')
+            ->where('nisn', $siswa->nisn)
+            ->delete();
+
         $siswa->delete();
 
         return back()->with('status', 'Data siswa dihapus.');
