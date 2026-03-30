@@ -212,19 +212,6 @@
                 </div>
             </div>
 
-            <div class="quick-info mt-4 p-3 p-md-4">
-                <div class="row g-3 align-items-center">
-                    <div class="col-md-8">
-                        <h6 class="mb-1">Tips membuat aspirasi yang jelas</h6>
-                        <div class="text-muted small">Tulis lokasi spesifik, jelaskan masalah singkat, dan tambahkan foto jika ada.</div>
-                    </div>
-                    <div class="col-md-4 text-md-end">
-                        <button class="btn btn-primary btn-sm" onclick="showAspirasi()">
-                            <i class="bi bi-send-fill me-1"></i>Mulai Aspirasi
-                        </button>
-                    </div>
-                </div>
-            </div>
         </section>
 
         <section id="aspirasi" class="page d-none">
